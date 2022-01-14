@@ -1,6 +1,6 @@
-import {Block, Transaction,  Hash} from '../types'
+import {Block, Transaction,  Hash} from './types';
 
-export default class Blockchain {
+export default class Blockchain { 
     chain: Block[]; 
     newTransaction: Transaction[];
     createBlock: (nonce: number, previousBlock: Hash, hash: Hash) => void; 

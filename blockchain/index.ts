@@ -1,2 +1,2 @@
 import Blockchain from "./createHash";
-export default Blockchain
+export default Blockchain;

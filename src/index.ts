@@ -1,12 +1,12 @@
 // Blockchain specific imports
-import Blockchain from './blockchain/index'
+import Blockchain from '../blockchain/index'
 
 // Server specific imports
 import express, { Express, Request, Response } from 'express';
 import bodyParser from 'body-parser';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import { Block } from './types';
+import { Block } from '../blockchain/types';
 
 dotenv.config();
 
