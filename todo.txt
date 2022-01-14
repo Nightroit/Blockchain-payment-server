@@ -1,0 +1,6 @@
+My to-do list
+
+1. Make a blockchain using node.js
+2. Make a client-side application, like social media. 
+3. Hosting it live. 
+
