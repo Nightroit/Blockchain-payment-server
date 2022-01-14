@@ -1,6 +1,7 @@
-import {Blockchain} from './blockchain'
-import {Block} from '../types'
-Blockchain.prototype.createBlock = function(nonce, previousBlock, hash) {
+import { Hash, Block } from '../types';
+import Blockchain from './blockchain'
+
+ Blockchain.prototype.createBlock = function(nonce: number, previousBlock: Hash, hash: Hash) {
     const newBlock: Block = {
         index: this.chain.length + 1, 
         date: Date.now(), 
@@ -13,3 +14,4 @@ Blockchain.prototype.createBlock = function(nonce, previousBlock, hash) {
     this.chain.push(newBlock)
     return newBlock
 }
+export default Blockchain
