@@ -5,12 +5,12 @@ Blockchain.prototype.createBlock = function(nonce: number, previousBlock: Hash, 
     const newBlock: Block = {
         index: this.chain.length + 1, 
         date: Date.now(), 
-        transaction: this.newTransaction, 
+        transaction: this.pendingTransactions, 
         nonce: nonce,
         hash: hash,
         prev: previousBlock,
     };
-    this.newTransaction = []; 
+    this.pendingTransactions = []; 
     this.chain.push(newBlock);
     return newBlock;
 };
