@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import Express from 'express'; 
 import axios from 'axios'; 
 import { request } from 'http';
+import longestChain from '../../blockchain/util/longestChain';
 
 const PORT = process.env.PORT || process.argv[2];
 const billi = new Blockchain(PORT); 
@@ -129,6 +130,33 @@ Routes.post('/mine', (req, res) => {
 Routes.post('/broadcast-block', (req, res) => {
     billi.createBlock(req.body.nonce, req.body.previous, req.body.hash);
     res.json({msg: "success"}); 
+})
+
+Routes.get('/consensus', (req, res) => {
+    const requests:any = []; 
+
+    billi.networkNodes.forEach((node) => {
+        requests.push(axios.get('http://localhost:' + node + '/blockchain'))
+    })
+    // choosing the longest chain
+    Promise.all(requests).then((ress) => {
+        let longest = billi.chain, newBlock = false;
+
+        ress.map(data => {
+            if(data.length > longest.length) { 
+                longest = data; 
+                newBlock = true; 
+            }
+        })
+
+        if(newBlock && billi.chainIsValid(longest)) {
+            billi.chain = longest; 
+            res.json({msg: "Chain was updated"})
+        }
+        //longestChain(ress, billi.chain)
+        res.json({msg: "hey"})
+    })
+
 })
 
 Routes.get('/chain-validator', (req, res) => {

@@ -15,3 +15,4 @@ export interface Block {
     prev: Hash
 }
 
+export type Chain = Block[]; 
