@@ -18,6 +18,7 @@ const block = {
 const val = billi.createHash("asld;kfjasdfj", block, 100)
 
 const Routes = Express.Router(); 
+console.log(billi.chainIsValid(billi.chain)); 
 Routes.get('/', (req, res) => {
     res.redirect('/blockchain')
 })
@@ -99,8 +100,29 @@ Routes.post('/transaction/broadcast', (req, res) => {
     })
 })
 
-Routes.get('/mine', (req, res) => {
+Routes.post('/mine', (req, res) => {
+    const hash = req.body.hash;
+    const previous = billi.getLastBlock()['hash'];
+    const nonce = req.body.nonce;  
+    if(hash.substr(0, 4) === '0000') {
+        billi.createBlock(nonce, previous, hash); 
+        const requests: any = [];
 
+        billi.networkNodes.forEach((node) => {
+            requests.push(axios.post('http://localhost:' + node + '/broadcast-block', {hash, previous, nonce}))
+        })
+
+        Promise.all(requests).then(() => {
+            res.json({msg: "successful!"})
+        })
+    } else {
+        res.json({msg: "Invalid hash"})
+    }
+})
+
+Routes.post('/broadcast-block', (req, res) => {
+    billi.createBlock(req.body.nonce, req.body.previous, req.body.hash);
+    res.json({msg: "success"}); 
 })
 
 export default Routes; 

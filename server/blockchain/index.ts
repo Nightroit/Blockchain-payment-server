@@ -1,2 +1,2 @@
-import Blockchain from "./createHash";
+import Blockchain from "./chainValidator";
 export default Blockchain;
