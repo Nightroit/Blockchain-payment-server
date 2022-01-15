@@ -131,7 +131,7 @@ Routes.post('/broadcast-block', (req, res) => {
     res.json({msg: "success"}); 
 })
 
-Routes.get('/chain-is-valid', (req, res) => {
+Routes.get('/chain-validator', (req, res) => {
     const val = billi.chainIsValid(billi.chain); 
     res.json({msg: val})
 })
