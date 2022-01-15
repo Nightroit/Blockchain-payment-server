@@ -4,7 +4,7 @@ import Blockchain from './blockchain';
 Blockchain.prototype.createBlock = function(nonce: number, previousBlock: Hash, hash: Hash) {
     const newBlock: Block = {
         index: this.chain.length + 1, 
-        date: Date.now(), 
+        date: (new Date()).toString(), 
         transaction: this.pendingTransactions, 
         nonce: nonce,
         hash: hash,

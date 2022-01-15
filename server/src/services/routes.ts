@@ -101,15 +101,21 @@ Routes.post('/transaction/broadcast', (req, res) => {
 })
 
 Routes.post('/mine', (req, res) => {
-    const hash = req.body.hash;
     const previous = billi.getLastBlock()['hash'];
-    const nonce = req.body.nonce;  
-    if(hash.substr(0, 4) === '0000') {
-        billi.createBlock(nonce, previous, hash); 
+    const currentBlock = {
+        transaction: billi.pendingTransactions, 
+        index: billi.getLastBlock()['index']+1
+    }
+    const hash = billi.miner(previous, currentBlock);
+    res.setTimeout(120000, function() {
+        res.send("Timeout!")
+    })
+    if(hash.hash.substr(0, 2) === '00') {
+        billi.createBlock(hash.nonce, previous, hash.hash); 
         const requests: any = [];
 
         billi.networkNodes.forEach((node) => {
-            requests.push(axios.post('http://localhost:' + node + '/broadcast-block', {hash, previous, nonce}))
+            requests.push(axios.post('http://localhost:' + node + '/broadcast-block', {nonce: hash.nonce, previous, hash: hash.hash}))
         })
 
         Promise.all(requests).then(() => {
@@ -123,6 +129,11 @@ Routes.post('/mine', (req, res) => {
 Routes.post('/broadcast-block', (req, res) => {
     billi.createBlock(req.body.nonce, req.body.previous, req.body.hash);
     res.json({msg: "success"}); 
+})
+
+Routes.get('/chain-is-valid', (req, res) => {
+    const val = billi.chainIsValid(billi.chain); 
+    res.json({msg: val})
 })
 
 export default Routes; 

@@ -8,7 +8,7 @@ export type Hash = string
 
 export interface Block {
     index: number, 
-    date: number, 
+    date: string, 
     transaction: Transaction[], 
     nonce: number, 
     hash: Hash, 

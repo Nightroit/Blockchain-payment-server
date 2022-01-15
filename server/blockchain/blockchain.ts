@@ -11,6 +11,7 @@ export default class Blockchain {
     createHash: (prev: Hash, curr: any, nonce: number) => Hash;
     addTransactionToPendingTransaction: (transaction: Transaction) => number; 
     chainIsValid: (blockchain: Block[]) => boolean; 
+    miner: (prev: Hash, curr: any) => any;
     constructor(url: string) {
         this.chain = []; 
         this.pendingTransactions = []; 
