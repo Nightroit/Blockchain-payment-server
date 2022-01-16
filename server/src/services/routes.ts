@@ -27,6 +27,8 @@ Routes.get('/', (req, res) => {
                 if(done) { 
                     axios.get('http://localhost:'+PORT + '/consensus').then(resp => {
                         res.json({updatedChain: resp.data.msg, billi});   
+                    }).catch((err) => {
+                        console.log("Route not available!")
                     })
                  
                 }
@@ -61,7 +63,9 @@ Routes.post('/register-and-broadcast-node', (req, res) => {
     console.log(billi); 
     if(billi.networkNodes.indexOf(url) == -1) {
         billi.networkNodes.forEach(node => {
-            requests.push(axios.post('http://localhost:' + node + '/register-node', url))
+            requests.push(axios.post('http://localhost:' + node + '/register-node', url)).then().catch((err: any) => {
+                console.log("Route not available!")
+            })
         })
     } 
 
@@ -71,6 +75,8 @@ Routes.post('/register-and-broadcast-node', (req, res) => {
             if(done) {
                 axios.post('http://localhost:' + url + '/register-node-bulk', {url: billi.currentNodeUrl}).then(() => {
                     res.status(200).json({msg: "successful!"})
+                }).catch((err: any) => {
+                    console.log("Route not available!")
                 })
              } else {
                  res.status(400).json({msg: "something went wrong!"})
@@ -85,7 +91,9 @@ Routes.post('/register-node-bulk', (req, res) => {
 
     if(billi.networkNodes.indexOf(url) == -1) {
         billi.networkNodes.forEach(node => {
-            requestPromise.push(axios.post('http://localhost:' + node + '/register-node', {url}))
+            requestPromise.push(axios.post('http://localhost:' + node + '/register-node', {url}).catch((err: any) => {
+                console.log("Route not available!")
+            }))
         })
         console.log("HERE"); 
         Promise.all(requestPromise).then(() => {
@@ -136,7 +144,9 @@ Routes.post('/transaction/broadcast', (req, res) => {
     const blockIndex = billi.addTransactionToPendingTransaction(transaction); 
     const requests:any = []; 
     billi.networkNodes.forEach((node) => {
-        requests.push(axios.post('http://localhost:' + node + '/add-to-pending', transaction))
+        requests.push(axios.post('http://localhost:' + node + '/add-to-pending', transaction).catch((err: any) => {
+            console.log("Route not available!")
+        }))
     })
     Promise.all(requests).then(() => {
         updateDB(billi, PORT, function(err: object, done: boolean) {
@@ -162,7 +172,9 @@ Routes.post('/mine', (req, res) => {
         const requests: any = [];
 
         billi.networkNodes.forEach((node) => {
-            requests.push(axios.post('http://localhost:' + node + '/broadcast-block', {nonce: hash.nonce, previous, hash: hash.hash}))
+            requests.push(axios.post('http://localhost:' + node + '/broadcast-block', {nonce: hash.nonce, previous, hash: hash.hash}).catch((err: any) => {
+                console.log("Route not available!")
+            }))
         })
 
         Promise.all(requests).then(() => {
@@ -192,21 +204,26 @@ Routes.get('/consensus', (req, res) => {
     const requests:any = []; 
 
     billi.networkNodes.forEach((node) => {
-        requests.push(axios.get('http://localhost:' + node + '/blockchain'))
+        requests.push(axios.get('http://localhost:' + node + '/blockchain').catch((err: any) => {
+            console.log("Route not available!")
+        }))
     })
     // choosing the longest chain
     Promise.all(requests).then((ress) => {
         let longest = billi.chain, newBlock = false;
 
-        ress.map(data => {
-            if(data.length > longest.length) { 
-                longest = data; 
-                newBlock = true; 
-            }
+        ress.map(res => {
+                console.log(res);
+                if((res) && res.data.chain.length > longest.length) { 
+                    longest = res.data.chain; 
+                    newBlock = true; 
+                }
         })
-
+        console.log(billi.chainIsValid(longest))
+        console.log(newBlock)
         if(newBlock && billi.chainIsValid(longest)) {
-            billi.chain = longest; 
+            billi.chain = longest;
+            console.log("HERE");  
             updateDB(billi, PORT, function(err: object, done: boolean) {
                 if(done) {
                     res.json({msg: "YES"}); 

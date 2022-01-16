@@ -8,5 +8,5 @@ export default function(billi: Blockchain, data: any, callback: any) {
     billi.currentNodeUrl = data[0].currentNodeUrl;
     billi.pendingTransactions = data[0].pendingTransactions;
     billi.networkNodes = data[0].networkNodes;
-    callback(null, true); 
+    callback(null, true);
 }

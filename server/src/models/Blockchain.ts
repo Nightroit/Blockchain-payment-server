@@ -9,19 +9,23 @@ const BlockchainSchema = new mongoose.Schema({
         transaction: [{
             amount: Number, 
             sender: String, 
-            recipient: String
+            recipient: String, 
+            _id: false
         }], 
         nonce: Number, 
         hash: String, 
         prev: String, 
+        _id: false
     }], 
     pendingTransactions: [{
         amount: Number, 
         sender: String, 
-        recipient: String
+        recipient: String, 
+        _id: false, 
     }], 
     currentNodeUrl: String, 
-    networkNodes: [String]
+    networkNodes: [String], 
+   
 })
 
 const BlockchainModel = mongoose.model('Chain', BlockchainSchema)
