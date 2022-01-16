@@ -7,6 +7,7 @@ const cors = require('cors');
 
 // Importing routes 
 import Routes from './services/routes'
+import mongoose from 'mongoose';
 
 dotenv.config();
 
@@ -22,4 +23,9 @@ app.use(cors());
 // Billi coin took birth <3
 
 app.use(Routes)
-app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
+let mongourl: any = process.env.MONGODB
+//First connecting to mongodb
+mongoose.connect(mongourl).then(data => {
+    console.log("Connected to mongoose!"); 
+    app.listen(PORT, () => console.log(`Running on ${PORT} ⚡`));
+})

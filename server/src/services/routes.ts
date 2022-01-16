@@ -1,32 +1,54 @@
 import Blockchain from '../../blockchain/index'
+import BlockchainModel from '../models/Blockchain';
 import dotenv from 'dotenv';
 import Express from 'express'; 
 import axios from 'axios'; 
-import { request } from 'http';
-import longestChain from '../../blockchain/util/longestChain';
+import mongoose from 'mongoose';
+import { networkInterfaces } from 'os';
+import loadData from '../util/loadData';
+import updateDB from '../util/updateDB';
+
+dotenv.config(); 
 
 const PORT = process.env.PORT || process.argv[2];
-const billi = new Blockchain(PORT); 
-const block = {
-    "index": 1,
-    "date": 1642178733599,
-    "transaction": [],
-    "nonce": 100,
-    "hash": "0",
-    "prev": "0"
-    }
 
-const val = billi.createHash("asld;kfjasdfj", block, 100)
+var billi = new Blockchain(process.argv[2], 'endure', PORT);
+var billiDB; 
 
 const Routes = Express.Router(); 
-console.log(billi.chainIsValid(billi.chain)); 
+
+console.log(process.env.MONGODB);
 Routes.get('/', (req, res) => {
-    res.redirect('/blockchain')
+    // Searching for existing instance of user
+    BlockchainModel
+    .find({'userId': process.argv[2]}, function(err, data) {
+        if(data.length != 0) {
+            loadData(billi, data, function(err: object, done: boolean) {
+                if(done) { 
+                    axios.get('http://localhost:'+PORT + '/consensus').then(resp => {
+                        res.json({updatedChain: resp.data.msg, billi});   
+                    })
+                 
+                }
+                else res.json({msg: "impossible!"})
+              
+            })
+        } else {
+            var obj = new BlockchainModel(JSON.parse(JSON.stringify(billi)));
+            obj.save().then((data: any) => {  
+                billiDB = obj;
+            }); 
+            res.json(billi)
+        }
+       
+    }) 
+
 })
 
 Routes.get('/blockchain', (req, res) => {
-    res.json( billi)
+    res.json(billi); 
 })
+
 
 Routes.post('/transaction', (req, res) => {
     const blockIndex = billi.createTransaction(req.body.amount, req.body.sender, req.body.recipient); 
@@ -36,7 +58,7 @@ Routes.post('/transaction', (req, res) => {
 Routes.post('/register-and-broadcast-node', (req, res) => {
     const url = req.body.nodeUrl;
     const requests:any = []; 
-
+    console.log(billi); 
     if(billi.networkNodes.indexOf(url) == -1) {
         billi.networkNodes.forEach(node => {
             requests.push(axios.post('http://localhost:' + node + '/register-node', url))
@@ -45,11 +67,16 @@ Routes.post('/register-and-broadcast-node', (req, res) => {
 
     Promise.all(requests).then(() => {  
         billi.networkNodes.push(url); 
-        axios.post('http://localhost:' + url + '/register-node-bulk', {url: billi.currentNodeUrl}).then(() => {
-            res.status(200).json({msg: "successful!"})
-        })
+        updateDB(billi, PORT, function(err: object, done: boolean) {
+            if(done) {
+                axios.post('http://localhost:' + url + '/register-node-bulk', {url: billi.currentNodeUrl}).then(() => {
+                    res.status(200).json({msg: "successful!"})
+                })
+             } else {
+                 res.status(400).json({msg: "something went wrong!"})
+             }
+        }); 
     })
-
 })
 
 Routes.post('/register-node-bulk', (req, res) => {
@@ -60,13 +87,18 @@ Routes.post('/register-node-bulk', (req, res) => {
         billi.networkNodes.forEach(node => {
             requestPromise.push(axios.post('http://localhost:' + node + '/register-node', {url}))
         })
-        
+        console.log("HERE"); 
         Promise.all(requestPromise).then(() => {
-            billi.networkNodes.push(url); 
-            res.json({msg: "added!"})
+            billi.networkNodes.push(url);
+            updateDB(billi, PORT, function(err: object, done: boolean) {
+                if(done) {
+                    res.json({msg: "added!"})
+                }
+                else res.json({msg: "something went wrong at register-node-broadcast"})
+            }); 
         })
     } else {
-        res.json({msg: "already exists!"})
+        res.json({msg: "already exists!"});
     }
 })
 
@@ -74,19 +106,29 @@ Routes.post('/register-node', (req, res) => {
     const url = req.body.url; 
 
     if(billi.networkNodes.indexOf(url) == -1) {
-        billi.networkNodes.push(url); 
+        billi.networkNodes.push(url);
         axios.post('http://localhost:' + url + '/register-node', {url: billi.currentNodeUrl}).then(() => {
-            res.send({msg: "done!"})
+            updateDB(billi, PORT, function(err: object, done: boolean) {
+                if(done) {
+                    res.json({msg: "added!"})
+                }
+                else res.json({msg: "something went wrong at register-node"})
+            }); 
         })
-    } else res.send({msg: "already exists!"})
+    } else res.send({msg: "already exists!"});
 })
 
 
 Routes.post('/add-to-pending', (req, res) => {
     const transaction = billi.createTransaction(req.body.amount, req.body.sender, req.body.recipient); 
     billi.addTransactionToPendingTransaction(transaction); 
-    console.log(billi.pendingTransactions)
-    res.json({msg: "done"});
+    updateDB(billi, PORT, function(err: object, done: boolean) {
+        if(done) {
+            res.json({msg: "added!"})
+        }
+       else res.json({msg: "something went wrong at add-to-pending"})
+    });  
+
 })
 
 Routes.post('/transaction/broadcast', (req, res) => {
@@ -97,7 +139,11 @@ Routes.post('/transaction/broadcast', (req, res) => {
         requests.push(axios.post('http://localhost:' + node + '/add-to-pending', transaction))
     })
     Promise.all(requests).then(() => {
-        res.send(`The transaction will be added to the block${blockIndex}`);
+        updateDB(billi, PORT, function(err: object, done: boolean) {
+            if(done) {
+                res.send(`The transaction will be added to the block${blockIndex}`);
+            } else res.json({msg: "something went wrong at transaction/boradcast"})
+        });  
     })
 })
 
@@ -120,7 +166,12 @@ Routes.post('/mine', (req, res) => {
         })
 
         Promise.all(requests).then(() => {
-            res.json({msg: "successful!"})
+            updateDB(billi, PORT, function(err: object, done: boolean) {
+                if(done) {
+                    res.json({msg: "done!"})
+                }
+                else res.json({msg: "something went wrong at mine"})
+            });  
         })
     } else {
         res.json({msg: "Invalid hash"})
@@ -129,7 +180,12 @@ Routes.post('/mine', (req, res) => {
 
 Routes.post('/broadcast-block', (req, res) => {
     billi.createBlock(req.body.nonce, req.body.previous, req.body.hash);
-    res.json({msg: "success"}); 
+    updateDB(billi, PORT, function(err: object, done: boolean) {
+        if(done) {
+            res.json({msg: "success"}); 
+        }
+        else res.json({msg: "something went wrong at broadcast-block"})
+    });  
 })
 
 Routes.get('/consensus', (req, res) => {
@@ -151,10 +207,15 @@ Routes.get('/consensus', (req, res) => {
 
         if(newBlock && billi.chainIsValid(longest)) {
             billi.chain = longest; 
-            res.json({msg: "Chain was updated"})
+            updateDB(billi, PORT, function(err: object, done: boolean) {
+                if(done) {
+                    res.json({msg: "YES"}); 
+                }
+                else res.json({msg: "something went wrong at broadcast-block"})
+            }); 
         }
+        else res.json({msg: "NO"})
         //longestChain(ress, billi.chain)
-        res.json({msg: "hey"})
     })
 
 })
