@@ -1,0 +1,148 @@
+:root {
+    --sticky-top-right: -18rem;
+    --card-gray: rgb(65, 65, 65);
+    --card-gray-dark: rgb(34, 34, 34);
+    --card-padding: 0.5rem 0.5rem;
+    --card-radius: 0.2rem;
+    --color-primary: hsl(175, 99%, 40%);
+}
+
+.menu-item > span > h3, .uil {
+    font-style: none !important;
+    color: white !important; 
+
+}
+
+.main {
+    position: relative; 
+    top: 5.4rem;
+}
+
+.main .container {
+    display: grid; 
+    grid-template-columns: 25vh auto 20vw;
+    column-gap: relative;
+    position: relative;
+}
+
+/* ================================ LEFT ===================== */
+
+.main .container .left {
+    height:  max-content; 
+    position: sticky; 
+    top: var(--sticky-top-right); 
+}
+.sidebar {
+    margin-top: 10px; 
+    background: var(--card-gray);
+    border-radius: 5px;
+}
+.main >.container >.left> .profile {
+    padding: var(--card-padding);  
+    background: var(--card-gray);
+    border-radius: var(--card-radius);
+    display: flex; 
+    align-items: center; 
+    column-gap: 0.8rem;
+}
+.text-muted {
+    color: rgb(185, 185, 185) !important; 
+}
+
+
+
+
+.left .sidebar .menu-item {
+    display: flex; 
+    align-items: center;
+    height: 4rem;
+    cursor: pointer;
+    transition: all 100ms ease;
+    position: relative; 
+    padding-left: 1em; 
+    padding: 1em;
+    font-style: none !important;
+}       
+
+.left> .sidebar >.menu-item:hover { 
+    color: var(--color-primary) !important;
+    background: var(--card-gray-dark) !important
+}
+
+
+.left .sidebar .uil{ 
+
+   margin-left: 0.2rem;
+   position: relative; 
+}
+
+h3 {
+    font-size: 15px; 
+    display: inline; 
+}
+.notification-body {
+    color: white; 
+}
+.left .sidebar span .notification-count {
+    color: white; 
+    font-size: 0.6rem;
+    width: fit-content;
+    border-radius: 1rem;
+    padding: 0.05rem 0.2rem;
+    background: var(--color-primary);   
+    margin-left: -1em; 
+}
+
+
+.left .sidebar .active {
+    background: var(--card-gray-dark)
+}
+
+.left .sidebar .active span, 
+.left .sidebar .active h3 {
+    color: var(--color-primary)
+}
+
+.left .sidebar .active::before {
+    content: ""; 
+    display: block;
+    width: 0.5rem;
+    height: 100%; 
+    position: absolute;
+    background: var(--color-primary);
+    left: -4px;   
+}
+
+.left .notification-popup {
+    position: absolute;
+    top: 15px; 
+    left: 107%;
+    width: 30rem;
+    background-color: var(--card-gray);
+    border-radius: var(--card-radius);
+    height: 14rem;
+    padding: 10px; 
+    -webkit-box-shadow: 5px 1px 12px 1px rgba(1,102,94,0.77);
+    -moz-box-shadow: 5px 1px 12px 1px rgba(1,102,94,0.77);
+    box-shadow: 5px 1px 12px 1px rgba(1,102,94,0.77);
+} 
+
+.left .notification-popup::before {
+    content: "";
+    width: 1.2rem; 
+    height: 1.2rem;
+    display: block;
+    background: var(--card-gray);
+    position: absolute; 
+    left: -0.6rem; 
+    top: 3.3px; 
+    transform: rotate(45deg);  
+    border-radius-left: 1rem;
+}
+
+.left .notification-popup > div {
+    display: flex; 
+    align-items: start;
+    gap: 1rem;
+    padding: 0.8rem 0 0.8rem 0.8rem;
+}
