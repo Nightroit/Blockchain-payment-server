@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'; 
 
 const BlockchainSchema = new mongoose.Schema({
+    updatedChain: String,
     userName: String,
     userId: String,
     chain: [{
