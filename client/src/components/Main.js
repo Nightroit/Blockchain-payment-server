@@ -1,5 +1,6 @@
 import React from 'react'; 
 import CreatePost from './CreatePost';
+import Feeds from './Feeds';
 import './Main.css'
 
 function Main() {
@@ -88,9 +89,8 @@ function Main() {
                 </div>
                 
                 <div class = "middle">
-                    <div>
-                       <CreatePost/>
-                    </div>
+                    <CreatePost/>
+                    <Feeds/>
                 </div>
                 <div class = "right">
                     

@@ -146,3 +146,107 @@ h3 {
     gap: 1rem;
     padding: 0.8rem 0 0.8rem 0.8rem;
 }
+
+.middle .create-post {
+    display: flex; 
+    align-items: center;
+    justify-content: space-between;
+    margin-top: -0.9rem;
+    background: var(--card-gray);
+    padding: 0.4rem var(--card-padding);
+    margin-left: 60px; 
+    border-radius: var(--card-radius);
+    width: 74%; 
+    margin-left: 7rem;
+}
+.middle #create-post {
+    padding: 1rem; 
+    width: 100%; 
+    background-color: var(--card-gray);
+    color: white; 
+}
+
+.notification-popup {
+    display: none; 
+}
+
+.middle .feeds .feed {
+    background: var(--card-gray); 
+    margin: 1rem 0; 
+    font-size: 0.85rem;
+    line-height: 1.5; 
+}
+
+.middle .feed .head {
+    display: flex; 
+    justify-content: space-between;
+}
+
+
+.middle .feed .photo {
+    overflow: hidden;
+    margin: 0.7rem 0; 
+}
+
+.middle .feed .action-buttons {
+    display: flex; 
+    justify-content: space-between;
+    align-items: center; 
+    font-size: 1.4rem;
+    margin: 0.6rem;
+}
+
+.middle .liked-by {
+    display: flex; 
+}
+
+
+.middle .liked-by span{
+    width: 1.4rem;
+    height: 1.4rem; 
+    display: block;
+    border-radius: 50%; 
+    overflow: hidden; 
+    border: 2px solid var(--color-white); 
+    margin-left: -0.6rem;
+}
+
+.middle .liked-by span:first-child {
+    margin-left:  0.01rem; 
+}
+
+h3 {
+    color: white; 
+}
+
+.user {
+    display: flex; 
+}
+.ingo {
+    margin-top: 15px;
+    margin-left: 10px;  
+}
+
+.head {
+    background: var(--card-gray);
+    border-radius: var(--card-radius);
+    padding: 15px; 
+    border: 0.2px solid white; 
+    margin-left: 7rem;
+    margin-right: 5rem; 
+    margin-top: 01rem;
+}
+.action-button{
+    display: flex; 
+    justify-content: space-between;
+    font-size: 20px;
+}
+
+.bookmark {
+    margin-top: 5px; 
+}
+
+.uil-bookmark-full {
+    display: flex; 
+    float: left; 
+}
