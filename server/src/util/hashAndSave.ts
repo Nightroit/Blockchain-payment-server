@@ -1,5 +1,7 @@
 import userModel from '../models/User';
 import { UserData } from "../../blockchain/types";
+import { buildNewServer } from '../index';
+
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
@@ -22,7 +24,8 @@ function hashAndSaveToDB(userData: any, res: any) {
                     id: user._id,
                 }
                 const token = jwt.sign(userForToken, process.env.SECRET)
-                return res.status(200).send({msg: "registered successfully", token}); 
+                buildNewServer(user.uniqueId + 3000)
+                return res.status(200).json({msg: "registered successfully", token, uniqueId: user.uniqueId}); 
             })
         });
     });

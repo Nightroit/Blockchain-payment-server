@@ -6,7 +6,7 @@ import Router from './services/routes';
 const cors = require('cors');
 
 export default class Service {
-    constructor(uniqueId: number) {
+    constructor(uniqueId: number ) {
         var app = express();
 
         app.use(helmet());
@@ -21,7 +21,7 @@ export default class Service {
         //First connecting to mongodb
         mongoose.connect(mongourl).then(data => {
             console.log("Connected to mongoose!"); 
-            app.listen(uniqueId, () => console.log(`Running on ${uniqueId} ⚡`));
+            app.listen(uniqueId, () => console.log(`A new user's server running on ${uniqueId} ⚡`));
         })
     }
 }

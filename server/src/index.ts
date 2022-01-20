@@ -6,6 +6,7 @@ const cors = require('cors');
 
 import mongoose from 'mongoose';
 import userRoutes from './services/userRoutes';
+import Service from './service';
 
 dotenv.config();
 
@@ -24,7 +25,10 @@ if(process.env.MONGODB) {
     })
 }
 
+let servers = []; 
 
-for(let i = 1; i <= 4; i++) {
-    //new Service(3000+i)
+function buildNewServer(uniqueId: number) {
+    servers.push(new Service(uniqueId))
 }
+
+export {buildNewServer}
