@@ -16,3 +16,10 @@ export interface Block {
 }
 
 export type Chain = Block[]; 
+
+export interface UserData {
+    userName: string, 
+    email: string, 
+    password: string, 
+    confirmPassword: string
+}

@@ -92,7 +92,7 @@ class Router {
                         console.log("Route not available!")
                     }))
                 })
-                console.log("HERE"); 
+
                 Promise.all(requestPromise).then(() => {
                     billi.networkNodes.push(url);
                     updateDB(billi, PORT, function(err: object, done: boolean) {

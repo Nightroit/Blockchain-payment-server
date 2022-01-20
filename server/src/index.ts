@@ -17,8 +17,9 @@ app.use(cors());
 app.use(userRoutes)
 if(process.env.MONGODB) {
     mongoose.connect(process.env.MONGODB).then(() => {
-        app.listen(3000, () => {
-            console.log("Listening at ", 3000); 
+        console.log("connected to mongoose");
+        app.listen(3010, () => {
+            console.log("Listening at ", 3010); 
         })
     })
 }
