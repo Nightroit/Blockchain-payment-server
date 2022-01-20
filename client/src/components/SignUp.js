@@ -1,15 +1,25 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useState} from 'react'; 
 import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import Validator  from '../util/validator';
 import Axios from '../util/axios'
-import { Link } from "react-router-dom";
+import { Link, useHistory, useNavigate } from "react-router-dom";
 
 import './SignIn.css'
 
 function SignUp() {
+    const navigate = useNavigate(); 
+    const navigateToMain = () => {
+        navigate("/")
+    }
+    useEffect(() => {
+        let token = localStorage.getItem('chainerToken') 
+        if(token != null || token != undefined){
+            navigateToMain(); 
+        }
+    }, [])
     const [userName, setUsername] = useState(''); 
     const [email, setEmail] = useState(''); 
     const [password, setPassword] = useState(''); 
@@ -36,24 +46,28 @@ function SignUp() {
         e.preventDefault();     
         let errs = []
         async function callback(err) {
+
             if(err.length == 0) {
-               await Axios('SIGNUP', {
+                await Axios('SIGNUP', {
                    userName, 
                    email, 
                    password, 
                }, setError)
-               console.log(errs); 
-               setError(errs);
+               navigateToMain();
             } else setError(err); 
+            
+            
         }
+
         Validator({
             userName, 
             email, 
             password, 
             confirmPassword
         }, callback)
+        
     }
-
+ 
     return (
     <div class = "align1">
         <div class="grid">

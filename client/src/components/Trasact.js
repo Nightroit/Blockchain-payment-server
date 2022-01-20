@@ -3,38 +3,32 @@ import {useState} from 'react';
 import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
 import {BsCoin} from 'react-icons/bs'
-
-import { Link } from 'react-router-dom';
-import Axios from '../util/axios'
-import Validator from '../util/validator';
+import axios from 'axios';
 
 import './SignIn.css'
 
 function SignIn() {
     const [amount, setAmount] = useState(''); 
     const [pin, setPin] = useState(''); 
+    const [recipient, setRecipient] = useState('');
     const [error, setError] = useState([]);
+    let uniqueId = localStorage.getItem('chainerUniqueId');
     const onChange = (e) => {
-        console.log(e.target.name); 
+        setRecipient(e.target.value)
+
     }
 
-    function isNumberKey(txt, evt) {
-        var charCode = (evt.which) ? evt.which : evt.keyCode;
-        if (charCode == 46) {
-          //Check if the text already contains the . character
-          if (txt.value.indexOf('.') === -1) {
-            return true;
-          } else {
-            return false;
-          }
-        } else {
-          if (charCode > 31 &&
-            (charCode < 48 || charCode > 57))
-            return false;
-        }
-        return true;
-      }
-
+    const onSubmit = (e) => {
+        e.preventDefault(); 
+        let sender = localStorage.getItem('userName'); 
+        axios.post('http://localhost:300' + uniqueId + '/transaction/broadcast', {
+            amount, 
+            sender, 
+            recipient
+        }).then((data) => {
+            console.log(data); 
+        })
+    }
       
       const handleDepositeAmountChange = (evt) => {
         const rx_live = /^[+-]?\d*(?:[.,]\d*)?$/;
@@ -46,14 +40,13 @@ function SignIn() {
         const rx_live = /^[0-9]*$/;
         if (rx_live.test(evt.target.value) && evt.target.value.length <= 6)
             setPin(evt.target.value);
-    
      }
 
     return (
     <div class = "transact">    
         <div class = "align">
             <div class="grid">
-                <form method="POST" class="form login">
+                <form onSubmit = {onSubmit} class="form login">
                     <div class="form__field">
                         <label for="amount">
                             <BsCoin class = "icon"/>

@@ -1,20 +1,30 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {useState} from 'react'; 
 import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Axios from '../util/axios'
 import Validator from '../util/validator';
 
 import './SignIn.css'
 
 function SignIn() {
+
+    const navigate = useNavigate(); 
+    const navigateToMain = () => {
+        navigate("/")
+    }
+    useEffect(() => {
+        let token = localStorage.getItem('chainerToken') 
+        if(token != null || token != undefined){
+            navigateToMain(); 
+        }
+    }, [])
     const [userName, setUsername] = useState(''); 
     const [password, setPassword] = useState(''); 
     const [error, setError] = useState([]);
+
     const onChange = (e) => {
-        console.log(e.target.name); 
-        console.log(e.target.value)
         if(e.target.name === "username") {
             setUsername(e.target.value); 
         } else setPassword(e.target.value)
@@ -22,12 +32,13 @@ function SignIn() {
     }
     const onSubmit = (e) => {
         e.preventDefault();     
-        function callback(err) {
+        console.log("thispart")
+        async function callback(err) {
             if(err.length == 0) {
-               Axios('LOGIN', {
+                Axios('LOGIN', {
                    userName,  
                    password
-               }); 
+               }, setError);
             } else {
                 setError(err);
                 //console.log(err); 
@@ -39,6 +50,7 @@ function SignIn() {
             password,
         }, callback)
     }
+
 
     return (
     <div class = "align">
@@ -64,8 +76,8 @@ function SignIn() {
             </form>
 
                 <p class="text--center error">
-                    {error[0] && "Enter valid " + error[0]}
-                    {error[1] && " and " + error[1]}
+                    {error[0] && error[0]}
+                    {error[1] &&  + error[1]}
                 </p>
             
             <p class=  'text--center'>

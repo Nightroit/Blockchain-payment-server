@@ -9,7 +9,6 @@ import Main from './components/Main';
 
 
 function App() {
-  console.log(localStorage.getItem('chainerToken'));
   if(localStorage.getItem('chainerToken') != null) {
     return (
       <Main/>
