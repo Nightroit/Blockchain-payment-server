@@ -5,13 +5,15 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const { v4: uuidv4 } = require('uuid');
 
-function hashAndSaveToDB(userData: UserData, res: any) {
+function hashAndSaveToDB(userData: any, res: any) {
     bcrypt.genSalt(saltRounds, function(err:any, salt:number) {
         bcrypt.hash(userData.password, salt, function(err:any, hash:string) {
+            console.log(userData)
             const user = new userModel({
                 userName: userData.userName, 
                 email: userData.email,
                 password: hash, 
+                uniqueId: userData.uniqueId,
                 _id: uuidv4()
             })
             user.save().then(() => {

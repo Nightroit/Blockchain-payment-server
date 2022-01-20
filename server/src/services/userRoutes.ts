@@ -21,7 +21,6 @@ userRoutes.post('/login', (req, res) => {
             console.log(err); 
         } else {
             userModel.findOne({userName}).then((user) => {
-                console.log(user); 
                 if(user) {
                     bcrypt.compare(password, user.password, function(err:any, result:boolean) {
                         if(result) {
@@ -29,11 +28,11 @@ userRoutes.post('/login', (req, res) => {
                                 username: user.username,
                                 id: user._id,
                             }
-                            const token = jwt.sign(userForToken, process.env.SECRET)
+                            const token = jwt.sign(userForToken, process.env.SECRET);
                             res.status(200).send({found: true, token, msg: ""}); 
-                        } else res.json({found: false, msg: ""})
+                        } else res.json({found: false, msg: ""});
                         });
-                 } else res.json({found: "false", msg: "wrong password"})
+                 } else res.json({found: "false", msg: "wrong password"});
             })
             error.push(err);
             console.log(err); 
@@ -55,16 +54,20 @@ userRoutes.post('/register', (req, res) => {
     var error = []; 
     function callback(err: any) {
         if(err.length == 0) {
-            return hashAndSaveToDB({
-                userName, 
-                email, 
-                password, 
-                confirmPassword
-            }, res)
+            userModel.find({}).sort({uniqueId: -1}).limit(1).then((user: any) => {
+                console.log(user); 
+                let id = user[0].uniqueId;
+                return hashAndSaveToDB({
+                    userName, 
+                    email, 
+                    password, 
+                    confirmPassword, 
+                    uniqueId: id + 1,
+                }, res)
+
+            });
         } else {
-            error.push(err);
-            console.log("HERE");
-            console.log(err); 
+            error.push(err); 
         }
     }
 
