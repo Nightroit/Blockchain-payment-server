@@ -7,6 +7,7 @@ const cors = require('cors');
 import mongoose from 'mongoose';
 import userRoutes from './services/userRoutes';
 import Service from './service';
+import axios from 'axios';
 
 dotenv.config();
 
@@ -26,9 +27,15 @@ if(process.env.MONGODB) {
 }
 
 let servers = []; 
-
+let users:any = []; 
 function buildNewServer(uniqueId: number) {
     servers.push(new Service(uniqueId))
+    if(users.length >= 1) {
+        axios.post('http://localhost:'+ users[users.length - 1] + '/register-and-broadcast-node',{
+            nodeUrl: uniqueId.toString()
+        })
+    }
+    users.push(uniqueId);
 }
 
 export {buildNewServer}

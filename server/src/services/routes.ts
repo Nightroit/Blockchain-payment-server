@@ -177,7 +177,7 @@ class Router {
                 Promise.all(requests).then(() => {
                     updateDB(billi, PORT, function(err: object, done: boolean) {
                         if(done) {
-                            res.json({msg: "done!"})
+                            res.json({msg:  hash.nonce})
                         }
                         else res.json({msg: "something went wrong at mine"})
                     });  
