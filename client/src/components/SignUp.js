@@ -2,6 +2,9 @@ import React from 'react'
 import {useState} from 'react'; 
 import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
+import { MdOutlineAlternateEmail } from "react-icons/md";
+import Validator  from '../util/validator';
+
 import Axios from '../util/axios'
 import { Link } from "react-router-dom";
 
@@ -16,12 +19,16 @@ function SignUp() {
     
     const onChange = (e) => {
         console.log(e.target.name); 
-        console.log(e.target.value)
-        if(e.target.name === "username") {
-            setUsername(e.target.value); 
-        } else if(e.taget.name === "email") {
+        if(e.target.name === "email") {
+         
+        }
+        if(e.target.name == "email") {
+            console.log("YES");     
             setEmail(e.target.value)
-        } else if(e.target.value === "password") {
+        }
+        else if(e.target.name === "username") {
+            setUsername(e.target.value); 
+        } else if(e.target.name === "password") {
             setPassword(e.target.value); 
         } else {
             setConfirmPassword(e.target.value); 
@@ -30,31 +37,22 @@ function SignUp() {
     }
 
     const onSubmit = (e) => {
-        e.preventDefault(); 
-        let error = []; 
-        if(userName == "") {
-            error.push("username")
+        e.preventDefault();     
+        function callback(err) {
+            if(err.length == 0) {
+               console.log("all clear") 
+            } else {
+                setError(err);
+                //console.log(err); 
+            }
         }
-        if(password == "") {
-            error.push("password"); 
-        }
-        if(confirmPassword == "") {
-            error.push("confirm password"); 
-        }
-        if(password !== confirmPassword) {
-            error.push("Password does not match")
-        }
-        if(email == "") {
-            error.push("email"); 
-        }
-        setError(error); 
-        if(error.length == 0) {
-            Axios('POST', {
-                userName, 
-                email, 
-                password,
-            }); 
-        }
+
+        Validator({
+            userName, 
+            email, 
+            password, 
+            confirmPassword
+        }, callback)
     }
 
     return (
@@ -66,14 +64,14 @@ function SignUp() {
                         <FaUserAlt class = "icon"/>
                     <span class="hidden">Username</span>
                     </label>
-                    <input onChange = {onChange} autocomplete="username" id="login__username" type="text" name="username" class="form__input" placeholder="Username" />
+                    <input onChange = {onChange}  id="login__username" type="text" name="username" class="form__input" placeholder="Username" />
                 </div>
                 <div class="form__field">
                     <label for="login_email">
-                        <FaUserAlt class = "icon"/>
+                        <MdOutlineAlternateEmail class = "icon"/>
                     <span class="hidden">Email</span>
                     </label>
-                    <input onChange = {onChange} autocomplete="username" id="login__username" type="text" name="username" class="form__input" placeholder="Username" />
+                    <input onChange = {onChange} id="login__username" type="text" name="email" class="form__input" placeholder="Email" />
                 </div>
                 <div class="form__field">
                     <label for="login__password">
@@ -87,19 +85,23 @@ function SignUp() {
                         <RiLockPasswordFill class = "icon"/>
                     <span class="hidden">Confirm password</span>
                     </label>
-                    <input  onChange = {onChange} id="login__password" type="password" name="password" class="form__input" placeholder="Confirm Password" />
+                    <input  onChange = {onChange} id="login__password" type="password" name="Confirm_password" class="form__input" placeholder="Confirm Password" />
                 </div>
                 <div class="form__field">
-                    <input type="submit" value="Sign In" />
+                    <input type="submit" value="Sign Up" />
                 </div>
             </form>
-
-                <p class="text--center error">
-                    {error[0] && "Enter valid " + error[0]}
-                    {error[1] && " and " + error[1]}
-                </p>
+            {
+                error.map(err => {
+                    return (
+                        <p class="text--center error">
+                            {err+ "!"}
+                        </p>
+                    )
+                })
+            }
             
-            <p class=  'text--center'>
+            <p class=  'text--center '>
                 Already a member? 
                 <Link to ="/"> Sign in now</Link> 
                 <svg class="icon">
