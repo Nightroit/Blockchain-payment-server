@@ -7,15 +7,16 @@ import axios from 'axios';
 
 import './SignIn.css'
 
-function SignIn() {
+function Transact() {
     const [amount, setAmount] = useState(''); 
     const [pin, setPin] = useState(''); 
     const [recipient, setRecipient] = useState('');
     const [error, setError] = useState([]);
+    const [minee, setMinee] = useState(); 
     let uniqueId = localStorage.getItem('chainerUniqueId');
-    const onChange = (e) => {
-        setRecipient(e.target.value)
 
+    const onChange = (e) => {
+        setRecipient(e.target.value);
     }
 
     const onSubmit = (e) => {
@@ -27,7 +28,11 @@ function SignIn() {
             recipient
         }).then((data) => {
             console.log(data); 
+            setRecipient('');  
+            setAmount('');
+            setPin(''); 
         })
+
     }
       
       const handleDepositeAmountChange = (evt) => {
@@ -41,7 +46,14 @@ function SignIn() {
         if (rx_live.test(evt.target.value) && evt.target.value.length <= 6)
             setPin(evt.target.value);
      }
-
+     const mine = () => {
+         axios.post('http://localhost:300' + uniqueId + '/mine').then((res) => {
+            setMinee(res.data.msg)
+         })
+         setTimeout(function() {
+             setMinee()
+         }, 2000)
+     }
     return (
     <div class = "transact">    
         <div class = "align">
@@ -69,6 +81,7 @@ function SignIn() {
 
                         </label>
                         <input  
+                            value = {recipient}
                             onChange = {onChange} 
                             id="login__password" 
                             type="text" 
@@ -98,13 +111,20 @@ function SignIn() {
                     <div class="form__field">
                         <input type="submit" value="Send" />
                     </div>
+                    <br></br>
+                    <br></br>
+                    <div class="form__field mine">
+                        <input type="submit" value="Mine" onClick = {mine} />
+                    </div>
                 </form>
 
                     <p class="text--center error">
                         {error[0] && "Enter valid " + error[0]}
                         {error[1] && " and " + error[1]}
                     </p>
-                
+                    <p class="text--center error">
+                        {minee &&  "Block found! Nonce: " + minee}
+                    </p>
     
             </div>
     
@@ -114,4 +134,4 @@ function SignIn() {
 }
 
 
-export default SignIn;
+export default Transact;
