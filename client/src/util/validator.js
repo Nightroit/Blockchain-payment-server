@@ -10,31 +10,35 @@ function Validator(userData, callback) {
             error.push("Invalid username")
         }
     }
-    
-    if(userData.email != undefined && userData.email === "") {
-        console.log("HERE"); 
-        error.push("Email is empty");
-    } else {
-        const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-        if(!pattern.test(userData.email)){ 
-            error.push("Invalid email address"); 
-        }
+    if(userData.email !== undefined) {
+        if(userData.email !== undefined && userData.email === "") {
 
-    } 
-    if(userData.confirmPassword  != undefined && userData.confirmPassword === "") {
-        error.push("Confirm password is empty")
+            error.push("Email is empty");
+        } else {
+            const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+            if(!pattern.test(userData.email)){ 
+                error.push("Invalid email address"); 
+            }
+
+        } 
     }
-    if(userData.password == "") {
-        error.push("Password is empty"); 
-    } else {
-        const pattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
-        if(!pattern.test(userData.password)) {
-            error.push("Invalid password"); 
+
+    const pattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/
+    if(!pattern.test(userData.password)) {
+        error.push("Invalid password"); 
+    }
+
+    if(userData.confirmPassword !== undefined) {
+        if(userData.confirmPassword === "") {
+            error.push("Confirm password is empty")
+        }
+        if(userData.password == "") {
+            error.push("Password is empty"); 
         } else {
             if(userData.password !== userData.confirmPassword) {
                 error.push("Password does not match");
             }
-        } 
+        }
     }
     callback(error);
 }

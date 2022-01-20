@@ -1,0 +1,17 @@
+.main {
+    display: flex; 
+}
+
+.transact {
+    border: 1px solid #aaa9aa;
+
+    height: 100vh; 
+    width: 30%; 
+}
+
+.ledger {
+    border: 1px solid #aaa9aa;
+
+    height: 100vh; 
+    width: 70%;
+}

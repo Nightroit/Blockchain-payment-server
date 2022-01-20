@@ -1,3 +1,3 @@
 module.exports = {
-    MAINSERVER: "https://localhost:3001"
+    MAINSERVER: "http://localhost:3010"
 }

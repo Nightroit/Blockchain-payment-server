@@ -4,7 +4,6 @@ import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
 import { MdOutlineAlternateEmail } from "react-icons/md";
 import Validator  from '../util/validator';
-
 import Axios from '../util/axios'
 import { Link } from "react-router-dom";
 
@@ -19,11 +18,8 @@ function SignUp() {
     
     const onChange = (e) => {
         console.log(e.target.name); 
-        if(e.target.name === "email") {
-         
-        }
-        if(e.target.name == "email") {
-            console.log("YES");     
+
+        if(e.target.name == "email") {    
             setEmail(e.target.value)
         }
         else if(e.target.name === "username") {
@@ -36,17 +32,20 @@ function SignUp() {
       
     }
 
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();     
-        function callback(err) {
+        let errs = []
+        async function callback(err) {
             if(err.length == 0) {
-               console.log("all clear") 
-            } else {
-                setError(err);
-                //console.log(err); 
-            }
+               await Axios('SIGNUP', {
+                   userName, 
+                   email, 
+                   password, 
+               }, setError)
+               console.log(errs); 
+               setError(errs);
+            } else setError(err); 
         }
-
         Validator({
             userName, 
             email, 

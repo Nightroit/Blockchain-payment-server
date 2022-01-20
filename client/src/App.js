@@ -1,22 +1,22 @@
 import './App.css';
 import {
-  BrowserRouter,
   Routes,
-  Route, 
-} from "react-router-dom";
+  Route,
+  Navigate, 
+} from "react-router-dom";  
 import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
+import Main from './components/Main';
+
 
 function App() {
-  if(localStorage.getItem('token')) {
-    return ""
+  console.log(localStorage.getItem('chainerToken'));
+  if(localStorage.getItem('chainerToken') != null) {
+    return (
+      <Main/>
+    )
+  } else {
+    return <SignIn/>; 
   }
-  return (
-        <Routes>
-          <Route path="/" element={<SignIn />} />
-          <Route path="/signUp" element={<SignUp />} />
-        </Routes>
-  );
 }
 
 export default App;

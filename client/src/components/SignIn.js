@@ -4,6 +4,7 @@ import {FaUserAlt} from 'react-icons/fa';
 import {RiLockPasswordFill} from 'react-icons/ri'
 import { Link } from 'react-router-dom';
 import Axios from '../util/axios'
+import Validator from '../util/validator';
 
 import './SignIn.css'
 
@@ -20,18 +21,23 @@ function SignIn() {
       
     }
     const onSubmit = (e) => {
-        e.preventDefault(); 
-        let error = []; 
-        if(userName == "") {
-            error.push("username")
+        e.preventDefault();     
+        function callback(err) {
+            if(err.length == 0) {
+               Axios('LOGIN', {
+                   userName,  
+                   password
+               }); 
+            } else {
+                setError(err);
+                //console.log(err); 
+            }
         }
-        if(password == "") {
-            error.push("password"); 
-        }
-        setError(error); 
-        if(error.length == 0) {
-            Axios('GET', null); 
-        }
+
+        Validator({
+            userName, 
+            password,
+        }, callback)
     }
 
     return (
