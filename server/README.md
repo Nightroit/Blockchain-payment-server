@@ -1,2 +1,2 @@
 # chainer
-Chainer is a social media app where you can transact cryptocurrency Billi. 
+Chainer is a blockchain based application implemented using Node.js
